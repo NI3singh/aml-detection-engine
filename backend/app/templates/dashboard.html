@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AML Transaction Monitoring{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="mt-2 text-sm text-gray-700">
+            Overview of your transaction monitoring system
+        </p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <!-- Total Transactions -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-3xl">💳</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total Transactions
+                            </dt>
+                            <dd class="text-3xl font-semibold text-gray-900">
+                                {{ "{:,}".format(total_transactions) }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Alerts -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-3xl">🚨</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Total Alerts
+                            </dt>
+                            <dd class="text-3xl font-semibold text-gray-900">
+                                {{ total_alerts }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New Alerts -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-3xl">🔔</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                New Alerts
+                            </dt>
+                            <dd class="text-3xl font-semibold text-blue-600">
+                                {{ new_alerts }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Critical Alerts -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-3xl">⚠️</div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">
+                                Critical Alerts
+                            </dt>
+                            <dd class="text-3xl font-semibold text-red-600">
+                                {{ critical_alerts }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
+        <div class="flex space-x-4">
+            <a href="/upload" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                📤 Upload Transactions
+            </a>
+            <a href="/alerts" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                🔍 View All Alerts
+            </a>
+        </div>
+    </div>
+    
+    <!-- Alerts by Severity -->
+    <div class="bg-white shadow rounded-lg p-6 mb-8">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Alerts by Severity</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="text-center p-4 bg-red-50 rounded-lg">
+                <div class="text-2xl font-bold text-red-700">{{ severity_counts.get('critical', 0) }}</div>
+                <div class="text-sm text-red-600">Critical</div>
+            </div>
+            <div class="text-center p-4 bg-orange-50 rounded-lg">
+                <div class="text-2xl font-bold text-orange-700">{{ severity_counts.get('high', 0) }}</div>
+                <div class="text-sm text-orange-600">High</div>
+            </div>
+            <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                <div class="text-2xl font-bold text-yellow-700">{{ severity_counts.get('medium', 0) }}</div>
+                <div class="text-sm text-yellow-600">Medium</div>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <div class="text-2xl font-bold text-blue-700">{{ severity_counts.get('low', 0) }}</div>
+                <div class="text-sm text-blue-600">Low</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Alerts -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">Recent Alerts</h2>
+        </div>
+        <div class="divide-y divide-gray-200">
+            {% if recent_alerts %}
+                {% for alert in recent_alerts %}
+                <div class="px-4 py-4 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full severity-{{ alert.severity.value }}">
+                                    {{ alert.severity.value.upper() }}
+                                </span>
+                                <span class="text-sm font-medium text-gray-900">
+                                    {{ alert.rule.name }}
+                                </span>
+                            </div>
+                            <div class="mt-2 text-sm text-gray-500">
+                                <span class="font-medium">${{ "{:,.2f}".format(alert.transaction.amount) }}</span>
+                                • {{ alert.transaction.sender_name }} → {{ alert.transaction.receiver_name }}
+                                • {{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                        <div>
+                            <a href="/alerts/{{ alert.id }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                View Details →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="px-4 py-8 text-center text-gray-500">
+                    No alerts yet. Upload transactions to start monitoring.
+                </div>
+            {% endif %}
+        </div>
+        {% if recent_alerts %}
+        <div class="px-4 py-3 bg-gray-50 text-center">
+            <a href="/alerts" class="text-sm font-medium text-blue-600 hover:text-blue-800">
+                View all alerts →
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Login - AML Transaction Monitoring{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                🛡️ AML Transaction Monitoring
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Sign in to your account
+            </p>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="login-form" class="mt-8 space-y-6">
+            <div class="rounded-md shadow-sm space-y-4">
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">
+                        Email address
+                    </label>
+                    <input 
+                        id="email" 
+                        name="email" 
+                        type="email" 
+                        required 
+                        class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                        placeholder="admin@example.com"
+                    >
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input 
+                        id="password" 
+                        name="password" 
+                        type="password" 
+                        required 
+                        class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                        placeholder="••••••••"
+                    >
+                </div>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="error-message" class="hidden rounded-md bg-red-50 p-4">
+                <div class="flex">
+                    <div class="text-sm text-red-700" id="error-text"></div>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div>
+                <button 
+                    type="submit" 
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                    Sign in
+                </button>
+            </div>
+            
+            <!-- Register Link -->
+            <div class="text-center">
+                <a href="/register" class="text-sm text-blue-600 hover:text-blue-500">
+                    Don't have an account? Register here
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorDiv = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+            
+            if (response.ok) {
+                window.location.href = '/dashboard';
+            } else {
+                const data = await response.json();
+                errorText.textContent = data.detail || 'Login failed. Please check your credentials.';
+                errorDiv.classList.remove('hidden');
+            }
+        } catch (error) {
+            errorText.textContent = 'An error occurred. Please try again.';
+            errorDiv.classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

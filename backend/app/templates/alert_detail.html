@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Alert Details - AML Transaction Monitoring{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="/alerts" class="text-sm text-gray-600 hover:text-gray-900">
+            ← Back to Alerts
+        </a>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-bold text-gray-900">Alert Details</h1>
+            <span class="px-3 py-1 text-sm font-semibold rounded-full severity-{{ alert.severity.value }}">
+                {{ alert.severity.value.upper() }}
+            </span>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Alert Information -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Alert Information</h2>
+                <dl class="grid grid-cols-1 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Rule</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ alert.rule.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Description</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ alert.rule.description or 'N/A' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Status</dt>
+                        <dd class="mt-1">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-{{ alert.status.value }}">
+                                {{ alert.status.value.replace('_', ' ').title() }}
+                            </span>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ alert.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</dd>
+                    </div>
+                    {% if alert.reviewed_by_user %}
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Reviewed By</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            {{ alert.reviewed_by_user.full_name }} on {{ alert.reviewed_at.strftime('%Y-%m-%d %H:%M') }}
+                        </dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+            
+            <!-- Transaction Details -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Transaction Details</h2>
+                <dl class="grid grid-cols-2 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Transaction ID</dt>
+                        <dd class="mt-1 text-sm text-gray-900 font-mono">{{ alert.transaction.transaction_id }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Amount</dt>
+                        <dd class="mt-1 text-sm text-gray-900 font-semibold">
+                            ${{ "{:,.2f}".format(alert.transaction.amount) }} {{ alert.transaction.currency.value }}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Sender</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            <div>{{ alert.transaction.sender_name }}</div>
+                            <div class="text-xs text-gray-500">ID: {{ alert.transaction.sender_id }}</div>
+                            <div class="text-xs text-gray-500">Country: {{ alert.transaction.sender_country }}</div>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Receiver</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            <div>{{ alert.transaction.receiver_name }}</div>
+                            <div class="text-xs text-gray-500">ID: {{ alert.transaction.receiver_id }}</div>
+                            <div class="text-xs text-gray-500">Country: {{ alert.transaction.receiver_country }}</div>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Transaction Type</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ alert.transaction.transaction_type.value }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Timestamp</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ alert.transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</dd>
+                    </div>
+                </dl>
+            </div>
+            
+            <!-- Alert Details (Rule-Specific) -->
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Why This Alert Was Generated</h2>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p class="text-sm text-gray-700 mb-3">
+                        <strong>{{ alert.details.get('description', 'Alert triggered by rule') }}</strong>
+                    </p>
+                    <dl class="space-y-2">
+                        {% for key, value in alert.details.items() %}
+                            {% if key not in ['description', 'rule_name'] %}
+                            <div class="flex justify-between text-sm">
+                                <dt class="text-gray-600">{{ key.replace('_', ' ').title() }}:</dt>
+                                <dd class="text-gray-900 font-medium">{{ value }}</dd>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </dl>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            {% if alert.notes %}
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Review Notes</h2>
+                <p class="text-sm text-gray-700 whitespace-pre-wrap">{{ alert.notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar - Review Actions -->
+        <div class="lg:col-span-1">
+            <div class="bg-white shadow rounded-lg p-6 sticky top-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Review Alert</h2>
+                
+                {% if alert.status.value == 'new' or alert.status.value == 'under_review' %}
+                <form id="review-form" class="space-y-4">
+                    <!-- Status Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Change Status
+                        </label>
+                        <select 
+                            id="status" 
+                            name="status" 
+                            required
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Select status...</option>
+                            <option value="under_review">Under Review</option>
+                            <option value="closed">Closed (Suspicious)</option>
+                            <option value="false_positive">False Positive</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Add Notes (Optional)
+                        </label>
+                        <textarea 
+                            id="notes" 
+                            name="notes" 
+                            rows="4"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Add your review notes here..."
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit"
+                        class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Submit Review
+                    </button>
+                </form>
+                {% else %}
+                <div class="text-center py-4">
+                    <div class="text-green-600 text-4xl mb-2">✓</div>
+                    <p class="text-sm text-gray-600">
+                        This alert has been reviewed and marked as 
+                        <strong>{{ alert.status.value.replace('_', ' ').title() }}</strong>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('review-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const status = document.getElementById('status').value;
+        const notes = document.getElementById('notes').value;
+        
+        if (!status) {
+            alert('Please select a status');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/alerts/{{ alert.id }}/review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status, notes })
+            });
+            
+            if (response.ok) {
+                showToast('Alert reviewed successfully', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                const data = await response.json();
+                showToast(data.detail || 'Failed to review alert', 'error');
+            }
+        } catch (error) {
+            showToast('An error occurred', 'error');
+        }
+    });
+</script>
+{% endblock %}

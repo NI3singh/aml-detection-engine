@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AML Transaction Monitoring{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- HTMX for dynamic updates -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Custom styles -->
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .severity-critical {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .severity-high {
+            background-color: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .severity-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .severity-low {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-new {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-under_review {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-closed {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-false_positive {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    
+    {% if is_authenticated %}
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/dashboard" class="text-2xl font-bold text-blue-600">
+                            🛡️ AML Monitor
+                        </a>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
+                        <a href="/dashboard" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Dashboard
+                        </a>
+                        <a href="/upload" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Upload
+                        </a>
+                        <a href="/alerts" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Alerts
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center">
+                    <span class="text-sm text-gray-700 mr-4">
+                        👤 {{ user.full_name }}
+                    </span>
+                    <form action="/api/auth/logout" method="POST" class="inline">
+                        <button type="submit" class="text-sm text-gray-500 hover:text-gray-700">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="{% if is_authenticated %}max-w-7xl mx-auto py-6 sm:px-6 lg:px-8{% endif %}">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+        <!-- Toast notifications will be injected here -->
+    </div>
+    
+    {% block extra_scripts %}{% endblock %}
+    
+    <script>
+        // Helper function to show toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `px-6 py-3 rounded-lg shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            } transition-opacity duration-300`;
+            toast.textContent = message;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // HTMX error handling
+        document.body.addEventListener('htmx:responseError', (event) => {
+            showToast('An error occurred. Please try again.', 'error');
+        });
+    </script>
+</body>
+</html>
