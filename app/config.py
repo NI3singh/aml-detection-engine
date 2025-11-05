@@ -24,16 +24,29 @@ class Settings(BaseSettings):
     
     # High-Risk Countries (ISO 3166-1 alpha-2 codes)
     HIGH_RISK_COUNTRIES: List[str] = [
-        "AF",  # Afghanistan
         "MM",  # Myanmar
         "KP",  # North Korea
-        "PK",  # Pakistan
         "IR",  # Iran
         "SY",  # Syria
         "YE",  # Yemen
-        "IQ",  # Iraq
-        "SO",  # Somalia
-        "LY",  # Libya
+        "DZ",  # Algeria
+        "AO",  # Angola
+        "BO",  # Bolivia
+        "BG",  # Bulgaria
+        "CM",  # Cameroon
+        "CI",  # Côte d'Ivoire
+        "HT",  # Haiti
+        "KE",  # Kenya
+        "LB",  # Lebanon
+        "LA",  # Laos
+        "MC",  # Monaco
+        "NA",  # Namibia
+        "NP",  # Nepal
+        "SS",  # South Sudan
+        "SY",  # Syria
+        "VE",  # Venezuela
+        "VN",  # Vietnam
+
     ]
     
     class Config:
