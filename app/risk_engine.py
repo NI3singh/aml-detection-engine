@@ -112,6 +112,7 @@ class RiskEngine:
             score = 20
             risk_score += score 
             triggered_rules.append(TriggeredRule( 
+                rule_name="Neighboring Country Access",
                 severity=RiskLevel.MEDIUM,
                 description=f"Transaction from neighboring country: {user_country} -> {ip_country}",
                 score_contribution=score
