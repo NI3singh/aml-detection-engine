@@ -5,69 +5,55 @@ from typing import List, Tuple
 from app.models import RiskLevel, TriggeredRule
 from app.config import settings
 import logging
+import json
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# --- Data Loading ---
+# Load the geo-data from the JSON file on startup
+GEODATA_FILE = Path(__file__).parent / "geodata.json"
+GEODATA = {}
 
-# Geographic regions (simplified for V1)
-REGIONS = {
-    "North America": ["US", "CA", "MX"],
-    "Europe": [
-        "GB", "FR", "DE", "ES", "IT", "NL", "BE", "PT", "IE", "AT", 
-        "CH", "SE", "NO", "DK", "FI", "PL", "CZ", "GR", "HU"
-    ],
-    "South America": ["BR", "AR", "CL", "CO", "PE", "VE", "UY", "EC"],
-    "Asia Pacific": ["AU", "NZ", "JP", "SG", "HK", "KR", "MY", "TH"],
-    "Middle East": ["AE", "SA", "IL", "QA", "KW", "OM", "BH"],
-    "South Asia": ["IN", "BD", "LK", "NP"],
-    "Africa": ["ZA", "EG", "NG", "KE", "GH", "MA"],
-}
+if GEODATA_FILE.exists():
+    try:
+        with open(GEODATA_FILE, 'r', encoding='utf-8') as f:
+            GEODATA = json.load(f)
+        logger.info(f"Successfully loaded geo-data from {GEODATA_FILE}")
+    except Exception as e:
+        logger.error(f"CRITICAL: Failed to load {GEODATA_FILE}. Risk engine may not work. Error: {e}")
+else:
+    logger.warning(f"WARNING: {GEODATA_FILE} not found. Run data_loader.py.")
+# --- End Data Loading ---
 
-# Neighboring countries (share border or very close)
-NEIGHBORS = {
-    "US": ["CA", "MX"],
-    "CA": ["US"],
-    "MX": ["US"],
-    "GB": ["IE"],
-    "IE": ["GB"],
-    "FR": ["BE", "DE", "ES", "IT", "CH", "LU"],
-    "DE": ["FR", "NL", "BE", "AT", "CH", "PL", "CZ"],
-    "ES": ["FR", "PT"],
-    "PT": ["ES"],
-    "IT": ["FR", "CH", "AT"],
-    "AU": ["NZ"],
-    "NZ": ["AU"],
-    # Add more as needed
-}
 
+# --- New Helper Functions ---
+def get_country_data(country_code: str) -> dict:
+    """Get geo-data for a country code."""
+    return GEODATA.get(country_code, {})
 
 def get_country_region(country_code: str) -> str:
     """Get region for a country code."""
-    for region, countries in REGIONS.items():
-        if country_code in countries:
-            return region
-    return "Unknown"
-
+    return get_country_data(country_code).get("region", "Unknown")
 
 def are_neighbors(country1: str, country2: str) -> bool:
     """Check if two countries are neighbors."""
-    return (
-        country2 in NEIGHBORS.get(country1, []) or
-        country1 in NEIGHBORS.get(country2, [])
-    )
-
+    country1_data = get_country_data(country1)
+    return country2 in country1_data.get("neighbors", [])
 
 def are_same_region(country1: str, country2: str) -> bool:
     """Check if two countries are in the same region."""
     region1 = get_country_region(country1)
     region2 = get_country_region(country2)
     return region1 == region2 and region1 != "Unknown"
+# --- End New Helper Functions ---
 
 
 class RiskEngine:
     """Risk assessment engine."""
     
     def __init__(self):
+        # This list is still in config.py, which is fine!
         self.high_risk_countries = settings.HIGH_RISK_COUNTRIES
     
     def assess_risk(
@@ -78,14 +64,7 @@ class RiskEngine:
     ) -> Tuple[int, RiskLevel, List[TriggeredRule], str]:
         """
         Assess risk based on country mismatch.
-        
-        Args:
-            user_country: User's registered country
-            ip_country: Country detected from IP
-            geoip_confidence: Confidence in GeoIP lookup (0-1)
-            
-        Returns:
-            Tuple of (risk_score, risk_level, triggered_rules, recommendation)
+        (THIS ENTIRE FUNCTION REMAINS 100% THE SAME AS YOUR ORIGINAL)
         """
         triggered_rules: List[TriggeredRule] = []
         risk_score = 0
@@ -103,7 +82,7 @@ class RiskEngine:
         # Countries don't match - assess severity
         logger.info(f"Country mismatch: {user_country} -> {ip_country}")
         
-        # Rule 2: Check for high-risk countries
+        # Rule 2: Check for high-risk countries (This is the correct hierarchy)
         if ip_country in self.high_risk_countries:
             score = 100
             risk_score += score

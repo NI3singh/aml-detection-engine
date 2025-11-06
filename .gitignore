@@ -6,3 +6,4 @@ __pycache__/
 .venv/
 venv/
 IP_check_Documentation.md
+geodata.json
