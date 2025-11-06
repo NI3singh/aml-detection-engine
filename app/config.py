@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     # GeoIP Service
     GEOIP_API_URL: str = "http://ip-api.com/json"
     GEOIP_TIMEOUT: int = 2  # seconds
+
+    # Redis Configuration
+    REDIS_URL: str = "redis://localhost:6379/0"
     
     # High-Risk Countries (ISO 3166-1 alpha-2 codes)
     HIGH_RISK_COUNTRIES: List[str] = [

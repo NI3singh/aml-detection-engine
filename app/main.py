@@ -91,6 +91,7 @@ async def screen_transaction(request: ScreeningRequest):
             # GeoIP failed - return medium risk with warning
             logger.warning(f"GeoIP lookup failed: {geoip_result.error}")
             
+            
             return ScreeningResponse(
                 status="success",
                 screening_id=f"SCR-{uuid.uuid4().hex[:12].upper()}",
@@ -110,7 +111,7 @@ async def screen_transaction(request: ScreeningRequest):
         logger.info(f"IP Country detected: {ip_country} ({geoip_result.country_name})")
         
         # Step 2: Assess risk
-        risk_score, risk_level, triggered_rules, recommendation = risk_engine.assess_risk(
+        risk_score, risk_level, triggered_rules, recommendation = await risk_engine.assess_risk(
             user_country=request.user_country,
             ip_country=ip_country,
             geoip_confidence=geoip_result.confidence
