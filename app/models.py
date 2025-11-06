@@ -82,7 +82,7 @@ class ScreeningResponse(BaseModel):
     # Risk Assessment
     risk_score: int = Field(..., description="Risk score (0-100)", ge=0, le=100)
     risk_level: RiskLevel = Field(..., description="Risk level category")
-    should_block: bool = Field(..., description="Recommendation to block transaction")
+    should_block: bool = Field(..., description="Recommendation to block transaction", examples=[False])
     confidence: float = Field(..., description="Confidence in assessment (0-1)", ge=0, le=1)
     
     # Details
