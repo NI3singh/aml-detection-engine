@@ -19,8 +19,9 @@ class Settings(BaseSettings):
     PORT: int = 8000
     
     # GeoIP Service
-    GEOIP_API_URL: str = "http://ip-api.com/json"
-    GEOIP_TIMEOUT: int = 2  # seconds
+    GEOIP_API_URL: str = "https://vpnapi.io/api"
+    VPNAPI_KEY: str
+    GEOIP_TIMEOUT: int = 5  # seconds
 
     # Redis Configuration
     REDIS_URL: str = "redis://localhost:6379/0"

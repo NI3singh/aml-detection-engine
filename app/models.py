@@ -13,6 +13,12 @@ class RiskLevel(str, Enum):
     HIGH = "high"
     CRITICAL = "critical"
 
+class SecurityDetails(BaseModel):
+    """Security flags related to the IP address."""
+    is_vpn: bool = Field(..., description="Is a commercial VPN")
+    is_proxy: bool = Field(..., description="Is a known proxy")
+    is_tor: bool = Field(..., description="Is a Tor exit node")
+    is_relay: bool = Field(..., description="Is a relay/anonymizer")
 
 class ScreeningRequest(BaseModel):
     """Request model for transaction screening."""
@@ -89,6 +95,8 @@ class ScreeningResponse(BaseModel):
     user_country: str = Field(..., description="User's registered country")
     detected_country: str = Field(..., description="Country detected from IP")
     countries_match: bool = Field(..., description="Whether countries match")
+
+    security: SecurityDetails = Field(..., description="IP security flags")
     
     # Triggered Rules
     triggered_rules: List[TriggeredRule] = Field(default_factory=list)
