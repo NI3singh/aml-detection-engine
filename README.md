@@ -3,10 +3,11 @@
 > **AI-Powered Anti-Money Laundering & Fraud Detection System**  
 > Enterprise-grade transaction monitoring with real-time risk assessment
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)]([LICENSE](https://github.com/NI3singh/aml-detection-engine/blob/main/LICENSE))
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
 [![Status: Active Development](https://img.shields.io/badge/status-active%20development-orange.svg)]()
+[![GitHub Stars](https://img.shields.io/github/stars/NI3singh/aml-detection-engine?style=social)](https://github.com/your-org/aml-detection-engine)
 
 ---
 
@@ -74,91 +75,6 @@ The **AML Detection Engine** is a modular, production-ready system designed to d
 | **ML Model Ensemble** | Medium | Combine multiple ML models for higher accuracy |
 | **Transaction Description NLP** | Low | Analyze payment memos for suspicious language |
 
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-```bash
-- Python 3.10+
-- Redis 7.0+
-- 2GB RAM minimum
-- API keys for third-party services (GeoIP, VPN detection, etc.)
-```
-
-### Installation
-```bash
-# Clone the repository
-git clone https://github.com/your-org/aml-detection-engine.git
-cd aml-detection-engine
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your API keys and configuration
-```
-
-### Running the API
-```bash
-# Start Redis (required)
-docker-compose up -d redis
-
-# Run the API server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-
-# API will be available at:
-# - Swagger Docs: http://localhost:8000/docs
-# - Health Check: http://localhost:8000/health
-```
-
----
-
-## 📡 API Usage
-
-### Basic Transaction Screening
-```bash
-POST /api/v1/screen
-Content-Type: application/json
-
-{
-  "transaction_id": "TXN12345",
-  "user_id": "USER789",
-  "user_country": "US",
-  "ip_address": "203.0.113.45",
-  "amount": 1500.00,
-  "currency": "USD",
-  "transaction_type": "deposit"
-}
-```
-
-### Response
-```json
-{
-  "status": "success",
-  "screening_id": "SCR-A1B2C3",
-  "risk_score": 75,
-  "risk_level": "high",
-  "should_block": false,
-  "modules": {
-    "ip_check": {
-      "risk_score": 75,
-      "detected_country": "RU",
-      "security": {
-        "is_vpn": true,
-        "is_tor": false
-      }
-    }
-  },
-  "recommendation": "Flag for manual review - VPN detected from different region",
-  "timestamp": "2025-01-15T10:30:45Z"
-}
-```
 
 ---
 
@@ -257,74 +173,6 @@ Each module has its own detailed documentation:
 - **[Anomaly Detection](modules/anomaly_detection/README.md)** - Behavioral analysis *(coming soon)*
 - **[Network Analysis](modules/network_analysis/README.md)** - Graph-based detection *(coming soon)*
 
----
-
-## 🤝 Integration Examples
-
-### Python
-```python
-import requests
-
-response = requests.post(
-    "https://api.your-domain.com/api/v1/screen",
-    headers={"Authorization": "Bearer YOUR_API_KEY"},
-    json={
-        "transaction_id": "TXN001",
-        "user_id": "USER123",
-        "user_country": "US",
-        "ip_address": "203.0.113.1"
-    }
-)
-
-risk_data = response.json()
-if risk_data["should_block"]:
-    print(f"Transaction blocked: {risk_data['recommendation']}")
-```
-
-### Node.js
-```javascript
-const axios = require('axios');
-
-const screenTransaction = async (transaction) => {
-  const response = await axios.post(
-    'https://api.your-domain.com/api/v1/screen',
-    transaction,
-    { headers: { 'Authorization': 'Bearer YOUR_API_KEY' } }
-  );
-  
-  return response.data;
-};
-```
-
-### cURL
-```bash
-curl -X POST "https://api.your-domain.com/api/v1/screen" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "transaction_id": "TXN001",
-    "user_id": "USER123",
-    "user_country": "US",
-    "ip_address": "203.0.113.1"
-  }'
-```
-
----
-
-## 🧪 Testing
-```bash
-# Run unit tests
-pytest tests/
-
-# Run integration tests
-pytest tests/integration/
-
-# Run with coverage
-pytest --cov=app tests/
-
-# Load testing
-locust -f tests/load/locustfile.py
-```
 
 ---
 
@@ -339,85 +187,15 @@ locust -f tests/load/locustfile.py
 
 *Benchmarks based on production workloads with Redis caching enabled*
 
----
 
-## 🔧 Configuration
-
-### Environment Variables
-```bash
-# API Configuration
-API_HOST=0.0.0.0
-API_PORT=8000
-DEBUG=false
-
-# Redis
-REDIS_URL=redis://localhost:6379/0
-
-# External Services
-GEOIP_API_KEY=your_geoip_key
-VPN_DETECTION_API_KEY=your_vpn_key
-
-# Security
-API_KEY_HASH_SECRET=your_secret_key
-RATE_LIMIT_PER_MINUTE=1000
-
-# Module Settings
-IP_CHECK_ENABLED=true
-ANOMALY_DETECTION_ENABLED=false  # Coming soon
-```
 
 ---
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md).
-
-### Development Setup
-```bash
-# Fork and clone the repo
-git clone https://github.com/your-username/aml-detection-engine.git
-
-# Create a feature branch
-git checkout -b feature/your-feature-name
-
-# Install dev dependencies
-pip install -r requirements-dev.txt
-
-# Make your changes and test
-pytest tests/
-
-# Submit a pull request
-```
-
-### Code Standards
-
-- **Style**: PEP 8 (enforced with `black` and `flake8`)
-- **Type Hints**: Required for all functions
-- **Documentation**: Docstrings for all modules and functions
-- **Tests**: Minimum 80% code coverage
-
----
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](https://github.com/NI3singh/aml-detection-engine/blob/main/LICENSE) file for details.
 
----
-
-## 🙋 Support
-
-### Community
-
-- **💬 Discord**: [Join our community](https://discord.gg/your-invite)
-- **📧 Email**: support@your-domain.com
-- **🐛 Issues**: [GitHub Issues](https://github.com/your-org/aml-detection-engine/issues)
-- **📖 Wiki**: [Documentation Wiki](https://github.com/your-org/aml-detection-engine/wiki)
-
-### Enterprise Support
-
-For enterprise deployment, custom modules, and dedicated support:
-- **📧 Contact**: enterprise@your-domain.com
-- **📞 Schedule a Demo**: [Calendly link]
 
 ---
 
@@ -462,49 +240,15 @@ For enterprise deployment, custom modules, and dedicated support:
 - 📋 Blockchain Transaction Monitoring
 - 📋 Advanced Reporting & Analytics
 
----
-
-## 🔗 Links
-
-- **🌐 Website**: [https://your-domain.com](https://your-domain.com)
-- **📚 Documentation**: [https://docs.your-domain.com](https://docs.your-domain.com)
-- **🔗 API Playground**: [https://api.your-domain.com/docs](https://api.your-domain.com/docs)
-- **📺 Demo Video**: [YouTube Link]
-- **📊 Case Studies**: [https://your-domain.com/case-studies](https://your-domain.com/case-studies)
 
 ---
 
 <div align="center">
 
-**Built with ❤️ by [Your Name/Team]**
+**Built by [Nitin Singh]**
 
 ⭐ Star us on GitHub if you find this project useful!
 
 [⬆ Back to Top](#-aml-detection-engine)
 
 </div>
-
-## 🎨 OPTIONAL: Add Visual Badges
-Add these at the top for a more professional look:
-```markdown
-[![Build Status](https://img.shields.io/github/workflow/status/your-org/aml-detection-engine/CI)](https://github.com/your-org/aml-detection-engine/actions)
-[![Code Coverage](https://img.shields.io/codecov/c/github/your-org/aml-detection-engine)](https://codecov.io/gh/your-org/aml-detection-engine)
-[![Docker Pulls](https://img.shields.io/docker/pulls/your-org/aml-detection-engine)](https://hub.docker.com/r/your-org/aml-detection-engine)
-[![GitHub Stars](https://img.shields.io/github/stars/your-org/aml-detection-engine?style=social)](https://github.com/your-org/aml-detection-engine)
-[![Contributors](https://img.shields.io/github/contributors/your-org/aml-detection-engine)](https://github.com/your-org/aml-detection-engine/graphs/contributors)
-```
-
----
-
-## 📝 **CUSTOMIZATION CHECKLIST**
-
-Before committing, replace these placeholders:
-```
-✏️ Replace:
-- `your-org` → Your GitHub organization/username
-- `your-domain.com` → Your actual domain
-- `Your Name/Team` → Your name or company
-- `YOUR_API_KEY` → Actual API key format
-- Discord/Calendly links → Your actual links
-- License → Adjust if not MIT
-```
