@@ -309,5 +309,5 @@ This project is licensed under the **MIT License** - see the [LICENSE](https://g
 
 [⬆ Back to Top](#-aml-detection-engine)
 
-</div>)** | ✅ **Production** | Geographic risk assessment with VPN/TOR/Proxy detection | Location-based fraud, sanctions screening |
+</div>
 
