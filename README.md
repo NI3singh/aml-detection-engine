@@ -280,19 +280,19 @@ This project is licensed under the **MIT License** - see the [LICENSE](https://g
 
 ## 🗺️ Roadmap
 
-### Q1 2025
+### Q1 2026
 - ✅ IP Check Module (Geographic + Security)
 - 🔨 Behavioral Anomaly Detection
 - 📋 Transaction Velocity Monitoring
 - 📋 API Authentication & Multi-tenancy
 
-### Q2 2025
+### Q2 2026
 - 📋 Network Analysis (Graph ML)
 - 📋 Entity Risk Scoring
 - 📋 Web Dashboard (React)
 - 📋 Advanced ML Models (Ensemble)
 
-### Q3 2025
+### Q3 2026
 - 📋 Real-time Streaming Support
 - 📋 Mobile SDK (iOS/Android)
 - 📋 Blockchain Transaction Monitoring
